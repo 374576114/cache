@@ -179,7 +179,6 @@ public:
 
 private:
     ll QueueNum(ll f) {
-        return std::min(MQ_NUM - 1, f);
         ll sum = 1;
         for (ll i = 0; i < MQ_NUM; ++i) {
             if (sum >= f) {
