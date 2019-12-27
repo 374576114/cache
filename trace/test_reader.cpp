@@ -4,7 +4,7 @@ int main()
 {
     char r;
     ll k, v;
-    Reader reader("./msr", 4096);
+    Reader reader("..\\trace\\msr", 4096);
 
     while (reader.Generator(r, k, v)) {
         record tmp(r, k, v);

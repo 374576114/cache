@@ -2,6 +2,7 @@
 #define __MQ_H__
 
 #include "lru.h"
+#include <deque>
 
 struct mq_node {
     ll key;
@@ -20,7 +21,7 @@ struct mq_node {
 typedef std::list<mq_node*> mq_list;
 
 #define MQ_NUM ((ll)4)
-#define MQ_LIFETIME ((ll)4)
+#define MQ_LIFETIME ((ll)40)
 
 class MQ {
 public:
@@ -71,19 +72,29 @@ public:
                 continue;
             }
 
+            assert(q_[i].size());
             auto p = q_[i].back();
             if (p->exptime <= cur_) {
                 q_[i].pop_back();
                 q_[i - 1].push_front(p);
                 p->it = q_[i - 1].begin();
                 p->exptime = cur_ + MQ_LIFETIME;
+                p->which = i - 1;
             }
         }
     }
 
     bool Add(ll key, ll value) {
         //Print();
+
+        if (used_ >= size_) {
+            Evict();
+        }
+
         if (map_.find(key) != map_.end()) {
+            if (! IS_VALID(map_[key]->value)) {
+                ++ used_;
+            }
             Get(key, value);
             return true;
         }
@@ -95,9 +106,6 @@ public:
         assert(p);
         map_[key] = p;
 
-        if (used_ >= size_) {
-            Evict();
-        }
 
         ll idx = QueueNum(p->f);
         q_[idx].push_front(p);
@@ -105,6 +113,7 @@ public:
         p->it = q_[idx].begin();
 
         ++ used_;
+        //Print();
         return true;
     }
 
@@ -114,7 +123,7 @@ public:
         }
 
         Adjust();
-        
+
         auto p = map_[key];
         ++ p->f;
         p->exptime = cur_ + MQ_LIFETIME;
@@ -141,6 +150,7 @@ public:
         p->it = q_[idx].begin();
         p->which = idx;
 
+        //Print();
         return p->value;
     }
 
@@ -174,6 +184,13 @@ public:
             std::cout << std::endl;
         }
 
+        std::cout << "{" << size_ << ":" << used_ << ":" << qsize_ << "}" << std::endl;
+        std::cout << "{" << q_[0].size()
+                << ":" << q_[1].size()
+                << ":" << q_[2].size()
+                << ":" << q_[3].size()
+                << ":" << qout_.size()
+                << ":" << qsize_ << "}" << std::endl;
         sta_.Print();
     }
 
@@ -193,7 +210,7 @@ private:
 
     mq_list q_[MQ_NUM];
     mq_list qout_;
-    std::unordered_map<int, mq_node*> map_;
+    std::unordered_map<ll, mq_node*> map_;
 
     ll size_, used_, qsize_;
     ll cur_;

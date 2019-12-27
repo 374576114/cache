@@ -32,6 +32,7 @@ public:
                 delta = b2len / b1len;
             }
 
+            //std::cout << p_ << std::endl;
             p_ = std::min(size_, p_ + delta);
 
             if (t1.Len() + t2.Len() >= size_) {
@@ -47,6 +48,7 @@ public:
                 delta = b1len / b2len;
             }
 
+            //std::cout << p_ << std::endl;
             p_ = std::max((ll)0, p_ - delta);
 
             if (t1.Len() + t2.Len() >= size_) {
@@ -126,20 +128,21 @@ public:
     }
 
     void Print(bool flag = false) {
-        if (! flag) {
+        if ( flag) {
             std::cout << "t1:" << std::endl;
-            t1.Print();
+            t1.Print(true);
 
             std::cout << "b1:" << std::endl;
-            b1.Print();
+            b1.Print(true);
 
             std::cout << "t2:" << std::endl;
-            t2.Print();
+            t2.Print(true);
 
             std::cout << "b2:" << std::endl;
-            b2.Print();
+            b2.Print(true);
         }
 
+        std::cout << p_ << std::endl;
         sta_.Print();
     }
 

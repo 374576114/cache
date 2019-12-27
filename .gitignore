@@ -1,3 +1,11 @@
 test
 a.out
 trace/a.out
+CMakeLists.txt
+CMakeFiles/
+.idea/
+cmake-build-debug/
+trace/log*
+trace/A
+trace/CAMRESTSA01-lvm0.csv
+trace/new.txt

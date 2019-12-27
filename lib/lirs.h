@@ -37,7 +37,7 @@ struct lirs_node {
 class LIRS {
 public:
     LIRS(ll size)
-        : cache_size_(size), used_size_(0), s_size_(0.9 * size), q_size_(0.1 * size) {
+        : cache_size_(size), used_size_(0), s_size_(0.99 * size), q_size_(0.1 * size) {
             assert(s_size_);
             assert(q_size_);
         }
@@ -55,11 +55,14 @@ public:
     void FreeOne() {
         assert(!q_.empty());
 
-        -- used_size_;
         auto pnode = q_.back();
         q_.pop_back();
         pnode->q = q_.end();
-        pnode->value = INVALID;
+
+        if (IS_VALID(pnode->value)) {
+            pnode->value = INVALID;
+            -- used_size_;
+        }
 
         if (pnode->s != s_.end()) {
             pnode->type = NHIR;
@@ -74,7 +77,9 @@ public:
         //Print();
         if (map_.find(key) != map_.end()) { // find it
             auto pnode = map_[key];
-            pnode->value = value;
+            if (!IS_VALID(pnode->value)) {
+                ++ used_size_;
+            }
             Get(key, value);
 
             return true;
@@ -92,6 +97,7 @@ public:
 
         // S is FULL, so just input it as HIR
         if (used_size_ > s_size_) {
+        //if (s_.size() > s_size_) {
             p->type = HIR;
             Push(p, false);
         }
@@ -176,6 +182,8 @@ public:
         }
 
         sta_.Print();
+        std::cout << "{" << s_.size() << ":" << q_.size() << "}"
+                  << "{" << used_size_ << ":" << s_size_ << ":" << q_size_  << "}" << std::endl;
     }
           
 private:
@@ -223,7 +231,7 @@ private:
 
     // front -- top  back  -- bottom
     std::list<lirs_node*> s_, q_;
-    std::unordered_map<ll, lirs_node*> map_;
+    std::map<ll, lirs_node*> map_;
     
     ll cache_size_, used_size_;
     ll s_size_;

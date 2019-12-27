@@ -7,10 +7,11 @@
 #include <map>
 #include "assert.h"
 
-#define NONE (-111)
+typedef unsigned long long ll;
+
+#define NONE ((ll)-11)
 #define INVALID (NONE)
 #define IS_VALID(value) ((value) != NONE && (value) != INVALID)
-typedef long long ll;
 
 struct node {
     ll key;
@@ -32,6 +33,7 @@ struct statistic {
         ++ all;
         if ((value != NONE) && (value != INVALID)) {
             ++ hit;
+        } else {
         }
     }
 
@@ -122,6 +124,7 @@ public:
             std::cout << std::endl;
         }
 
+        std::cout << "cnt: " << lru_.size() << "size: " << size_ << std::endl;
         sta_.Print();
     }
 private:
